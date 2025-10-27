@@ -13,25 +13,67 @@
     
     <!-- Typed.js for Typing Effect --><script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
 
-    <!-- Three.js (WebGL) Library --><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- REMOVED Three.js Library -->
 
     <style>
         /* Base font setting */
         body {
             font-family: 'Hind Siliguri', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            /* Link body background to CSS variable for gradient */
+            background: var(--animated-gradient); 
         }
 
-        /* WebGL Canvas Background */
-        #webgl-bg {
-            position: fixed; 
+        /* Animated Gradient Background */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        :root {
+            /* Define CSS variable for the gradient */
+             --gradient-angle: 145deg; /* Initial angle */
+             --animated-gradient: linear-gradient(
+                var(--gradient-angle), 
+                #020617, /* slate-950 */
+                #111827, /* gray-900 */
+                #312e81, /* indigo-900 */
+                #064e3b  /* emerald-900 */
+             );
+        }
+
+        #gradient-bg-container {
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100vh; 
+            width: 100vw;
+            height: 100vh;
             z-index: 1; /* Lowest layer */
-            opacity: 0.8; 
+            background: var(--animated-gradient);
+            background-size: 300% 300%; /* Make gradient larger for smooth animation */
+            animation: gradientShift 15s ease infinite; /* Color shift animation */
+            pointer-events: none;
+            transition: background 0.5s ease-out; /* Smooth transition for angle change */
         }
 
+
+        /* Ensure content sections are above the canvas */
+        section {
+            position: relative;
+            z-index: 10; /* Make sure sections are above the fixed canvas */
+            background-color: rgba(0, 0, 0, 0.7); /* Slightly dim sections over gradient */
+            backdrop-filter: blur(2px); /* Subtle blur */
+            -webkit-backdrop-filter: blur(2px);
+        }
+        /* Hero section needs higher z-index for plane */
+        #home {
+             z-index: 12;
+             background-color: transparent; /* Hero should be clear over bg */
+             backdrop-filter: none;
+             -webkit-backdrop-filter: none;
+        }
+        
         /* Glassmorphism class (Light glass for Dark Mode) */
         .glass-effect {
             background: rgba(255, 255, 255, 0.05);
@@ -102,7 +144,8 @@
             width: 200px; 
             height: 200px;
             perspective: 1000px; 
-            z-index: 15; /* Above WebGL(1) and Overlay(10) */
+            z-index: 15; /* Above Overlay(10) and Sections(10) */
+            pointer-events: none; /* Make sure plane doesn't block clicks */
         }
 
         #hero-plane {
@@ -124,8 +167,8 @@
 </head>
 <body class="bg-black text-gray-200">
 
-    <!-- WebGL Canvas Element -->
-    <canvas id="webgl-bg"></canvas>
+    <!-- Animated Gradient Background Container -->
+    <div id="gradient-bg-container"></div>
 
     <!-- ===== Header / Navigation Bar ===== -->
     <header class="fixed top-0 left-0 right-0 z-50 glass-effect transition-all duration-300">
@@ -175,7 +218,7 @@
 
     <!-- ===== Hero Section ===== -->
     <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
-        <!-- Overlay is now z-10, above canvas(1) but below plane(15) and text(20) -->
+        <!-- Overlay is now z-10 -->
         <div class="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-10"></div>
         
         <!-- 3D Scroll-Controlled Plane Container (z-15) --><div id="hero-plane-container">
@@ -208,7 +251,7 @@
     </section>
 
     <!-- ===== About Us Section ===== -->
-    <section id="about" class="py-24 bg-black relative z-10">
+    <section id="about" class="py-24"> <!-- Removed bg-black -->
         <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 fade-in">
                 <img src="https://i.ibb.co/C0mJkR7/Dream-Touch-Tours-logo.png" alt="ড্রিম টাচ ট্যুরস এন্ড ট্রাভেলস লোগো" class="mx-auto h-28 w-auto mb-6 object-contain filter drop-shadow-lg">
@@ -219,7 +262,7 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <!-- Trust Badge 1 --><div class="bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 100ms;">
+                <!-- Trust Badge 1 --><div class="bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 100ms;">
                     <div class="flex justify-center items-center mb-4">
                         <svg class="w-16 h-16 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -228,7 +271,7 @@
                     <h3 class="text-2xl font-semibold text-white mb-2">সরকার অনুমোদিত</h3>
                     <p class="text-gray-400">লাইসেন্স নং: ৪৯২৫</p>
                 </div>
-                <!-- Trust Badge 2 --><div class="bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 200ms;">
+                <!-- Trust Badge 2 --><div class="bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 200ms;">
                     <div class="flex justify-center items-center mb-4">
                         <svg class="w-16 h-16 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.05c0 .621-.504 1.125-1.125 1.125H5.625A1.125 1.125 0 014.5 18.2V14.15M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -238,7 +281,7 @@
                     <h3 class="text-2xl font-semibold text-white mb-2">IATA সদস্য</h3>
                     <p class="text-gray-400">কোড: ৪২৩৩৭৪৩৩</p>
                 </div>
-                <!-- Trust Badge 3 --><div class="bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 300ms;">
+                <!-- Trust Badge 3 --><div class="bg-gray-900/80 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 300ms;">
                     <div class="flex justify-center items-center mb-4">
                         <svg class="w-16 h-16 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -251,7 +294,8 @@
         </div>
     </section>
 
-    <!-- ===== Services Section ===== --><section id="services" class="py-24 bg-gray-900 relative z-10">
+    <!-- ===== Services Section ===== -->
+    <section id="services" class="py-24 bg-gray-900/80"> <!-- Slightly different bg for contrast -->
         <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 fade-in">
                 <h2 class="text-4xl font-bold text-white mb-4">আমাদের প্রধান সেবাসমূহ</h2>
@@ -298,7 +342,8 @@
         </div>
     </section>
 
-    <!-- ===== Package Tours Section ===== --><section id="packages" class="py-24 bg-black relative z-10">
+    <!-- ===== Package Tours Section ===== -->
+    <section id="packages" class="py-24 bg-black"> <!-- Removed bg-black -->
         <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 fade-in">
                 <h2 class="text-4xl font-bold text-white mb-4">আকর্ষণীয় প্যাকেজ ট্যুর</h2>
@@ -306,7 +351,7 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Package Card 1: Nepal --><div class="bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 100ms;">
+                <!-- Package Card 1: Nepal --><div class="bg-gray-900/80 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 100ms;">
                     <img src="https://images.unsplash.com/photo-1626217429188-34857b686cf2?auto=format&fit=crop&w=600&h=400&q=80" alt="নেপাল ট্যুর" class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h3 class="text-2xl font-semibold text-white mb-2">নেপাল ট্যুর - কাঠমান্ডু ও পোখরা</h3>
@@ -316,7 +361,7 @@
                         </a>
                     </div>
                 </div>
-                <!-- Package Card 2: Thailand --><div class="bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 200ms;">
+                <!-- Package Card 2: Thailand --><div class="bg-gray-900/80 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 200ms;">
                     <img src="https://images.unsplash.com/photo-1549419137-d0d52b12a527?auto=format&fit=crop&w=600&h=400&q=80" alt="থাইল্যান্ড ট্যুর" class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h3 class="text-2xl font-semibold text-white mb-2">থাইল্যান্ড স্পেশাল - ব্যাংকক ও পাতায়া</h3>
@@ -326,7 +371,7 @@
                         </a>
                     </div>
                 </div>
-                <!-- Package Card 3: Singapore-Malaysia --><div class="bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 300ms;">
+                <!-- Package Card 3: Singapore-Malaysia --><div class="bg-gray-900/80 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 300ms;">
                     <img src="https://images.unsplash.com/photo-1582234057997-873b88b022b7?auto=format&fit=crop&w=600&h=400&q=80" alt="সিঙ্গাপুর-মালয়েশিয়া ট্যুর" class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h3 class="text-2xl font-semibold text-white mb-2">সিঙ্গাপুর-মালয়েশিয়া কম্বো</h3>
@@ -340,7 +385,8 @@
         </div>
     </section>
 
-    <!-- ===== Why Choose Us Section ===== --><section id="why-us" class="py-24 bg-gray-900 relative z-10">
+    <!-- ===== Why Choose Us Section ===== -->
+    <section id="why-us" class="py-24 bg-gray-900/80"> <!-- Slightly different bg for contrast -->
         <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 fade-in">
                 <h2 class="text-4xl font-bold text-white mb-4">কেন হাজারো যাত্রী আমাদের উপর আস্থা রাখেন?</h2>
@@ -386,10 +432,11 @@
         </div>
     </section>
 
-    <!-- ===== Contact & Location Section ===== --><section id="contact" class="py-24 bg-black relative z-10">
+    <!-- ===== Contact & Location Section ===== -->
+    <section id="contact" class="py-24 bg-black"> <!-- Removed bg-black -->
         <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                <!-- Contact Form --><div class="bg-gray-900 p-8 md:p-12 rounded-2xl shadow-xl border border-gray-800 fade-in">
+                <!-- Contact Form --><div class="bg-gray-900/80 p-8 md:p-12 rounded-2xl shadow-xl border border-gray-800 fade-in">
                     <h2 class="text-3xl font-bold text-white mb-6">দ্রুত সেবার জন্য যোগাযোগ করুন</h2>
                     <form action="#" method="POST">
                         <div class="mb-5">
@@ -461,7 +508,7 @@
         </div>
     </section>
 
-    <!-- ===== Footer ===== --><footer class="bg-black text-gray-400 py-12 border-t border-gray-800 relative z-10">
+    <!-- ===== Footer ===== --><footer class="bg-black text-gray-400 py-12 border-t border-gray-800"> <!-- REMOVED relative z-10 -->
         <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
                 <!-- Copyright --><div>
@@ -489,153 +536,60 @@
         </div>
     </footer>
 
-    <!-- ===== MAIN JAVASCRIPT ===== -->
+    <!-- ===== MOVED MAIN JAVASCRIPT TO THE END ===== -->
     <script>
-        // --- Global 3D Variables ---
-        let scene, camera, renderer, globePoints, stars;
-        let targetColor = new THREE.Color(0x38bdf8); // Initial color (cyan)
-        
-        // --- Colors for Scroll Interaction ---
-        const sectionColors = {
-            'home': new THREE.Color(0x38bdf8),     // Cyan
-            'about': new THREE.Color(0xec4899),    // Pink
-            'services': new THREE.Color(0x8b5cf6), // Purple
-            'packages': new THREE.Color(0x10b981), // Green
-            'why-us': new THREE.Color(0xf59e0b),   // Amber
-            'contact': new THREE.Color(0xef4444)   // Red
-        };
-
-        // --- Main DOMContentLoaded Event Listener ---
-        // This ensures all HTML is loaded before we run any scripts
-        document.addEventListener('DOMContentLoaded', () => {
+        // --- Main Initialization Function ---
+        function initializePage() {
+            console.log("Initializing page..."); 
             
-            // Initialize All Animations
             initTyped();
-            initThreeJS();
+            // REMOVED initThreeJS() call
 
             // Attach All Event Listeners
             attachScrollListeners();
-            attachResizeListeners();
+            // REMOVED attachResizeListeners(); // No longer needed for Three.js
             attachMobileMenuListeners();
             attach3DCardListeners();
             attachFadeInObserver();
             attachMagneticButtonListeners();
-            attachScrollColorObserver(); // NEW: For background color change
-        });
-
-        // --- Initialization Functions (Called once) ---
-
-        function initTyped() {
-            if (typeof Typed !== 'undefined') {
-                new Typed('#typed-text', {
-                    strings: ['বিমান টিকেট', 'ভিসা প্রসেসিং', 'আকর্ষণীয় প্যাকেজ ট্যুর', 'গ্রুপ বুকিং', 'নিরাপদ ভ্রমণ'],
-                    typeSpeed: 70,
-                    backSpeed: 40,
-                    backDelay: 1500,
-                    loop: true,
-                    smartBackspace: true
-                });
-            } else {
-                console.error('Typed.js script not loaded');
-            }
+            // REMOVED attachScrollColorObserver(); // No longer needed for Three.js
+            
+            console.log("Page Initialization complete.");
         }
 
-        function initThreeJS() {
-            if (typeof THREE === 'undefined') {
-                console.error('Three.js script not loaded');
-                return;
+        // --- Initialization Sub-Functions ---
+
+        function initTyped() {
+            const typedElement = document.getElementById('typed-text');
+            if (typeof Typed !== 'undefined' && typedElement) {
+                console.log("Initializing Typed.js"); 
+                try {
+                    new Typed('#typed-text', {
+                        strings: ['বিমান টিকেট', 'ভিসা প্রসেসিং', 'আকর্ষণীয় প্যাকেজ ট্যুর', 'গ্রুপ বুকিং', 'নিরাপদ ভ্রমণ'],
+                        typeSpeed: 70,
+                        backSpeed: 40,
+                        backDelay: 1500,
+                        loop: true,
+                        smartBackspace: true
+                    });
+                } catch (e) {
+                    console.error("Error initializing Typed.js:", e);
+                }
+            } else {
+                console.warn('Typed.js script not loaded or element #typed-text not found');
             }
-            
-            const canvas = document.getElementById('webgl-bg');
-            if (!canvas) {
-                console.error('Canvas element #webgl-bg not found');
-                return;
-            }
-
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 10;
-            
-            renderer = new THREE.WebGLRenderer({
-                canvas: canvas,
-                antialias: true,
-                alpha: true 
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            
-            // Create Digital Globe (Point Cloud)
-            const particlesGeometry = new THREE.BufferGeometry;
-            const particlesCnt = 8000;
-            const posArray = new Float32Array(particlesCnt * 3);
-            const radius = 4;
-
-            for(let i = 0; i < particlesCnt * 3; i++) {
-                let vec = new THREE.Vector3(
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10
-                ).normalize().multiplyScalar(radius + (Math.random() - 0.5) * 0.2); 
-
-                posArray[i * 3 + 0] = vec.x;
-                posArray[i * 3 + 1] = vec.y;
-                posArray[i * 3 + 2] = vec.z;
-            }
-            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            
-            const particlesMaterial = new THREE.PointsMaterial({
-                size: 0.02,
-                color: targetColor, // Use the initial targetColor
-                transparent: true,
-                blending: THREE.AdditiveBlending
-            });
-            
-            globePoints = new THREE.Points(particlesGeometry, particlesMaterial);
-            scene.add(globePoints);
-
-            // Create Starfield
-            const starGeometry = new THREE.BufferGeometry;
-            const starCnt = 2000;
-            const starPosArray = new Float32Array(starCnt * 3);
-            
-            for(let i = 0; i < starCnt * 3; i++) {
-                starPosArray[i * 3 + 0] = (Math.random() - 0.5) * 200;
-                starPosArray[i * 3 + 1] = (Math.random() - 0.5) * 200;
-                starPosArray[i * 3 + 2] = (Math.random() - 0.5) * 200;
-            }
-            starGeometry.setAttribute('position', new THREE.BufferAttribute(starPosArray, 3));
-            
-            const starMaterial = new THREE.PointsMaterial({
-                size: 0.1,
-                color: 0xffffff,
-                transparent: true,
-                opacity: 0.7
-            });
-            
-            stars = new THREE.Points(starGeometry, starMaterial);
-            scene.add(stars);
-
-            // Start the animation loop
-            animateThreeJS();
         }
 
         // --- Event Listener Attachment Functions ---
 
         function attachScrollListeners() {
-            window.addEventListener('scroll', () => {
-                handleHeaderScroll();
-                handleScrollPlaneAnimation(); 
-                handleThreeScroll(); 
-            });
-            // Initial call to set positions
-            handleHeaderScroll();
-            handleScrollPlaneAnimation();
-            handleThreeScroll();
+            window.addEventListener('scroll', handleScrollEvents); // Use a single handler
+            // Initial call
+            handleScrollEvents(); // Call once initially
+            console.log("Scroll listeners attached."); 
         }
 
-        function attachResizeListeners() {
-            window.addEventListener('resize', onWindowResize, false);
-        }
+        // REMOVED attachResizeListeners() - No longer needed without Three.js
 
         function attachMobileMenuListeners() {
             const menuButton = document.getElementById('mobile-menu-button');
@@ -646,12 +600,15 @@
                     mobileMenu.classList.toggle('hidden');
                 });
                 
-                const mobileLinks = mobileMenu.getElementsByTagName('a');
-                for (let link of mobileLinks) {
+                const mobileLinks = mobileMenu.querySelectorAll('a'); // More specific selector
+                mobileLinks.forEach(link => {
                     link.addEventListener('click', () => {
                         mobileMenu.classList.add('hidden');
                     });
-                }
+                });
+                console.log("Mobile menu listeners attached."); 
+            } else {
+                 console.error("Mobile menu button or menu itself not found.");
             }
         }
 
@@ -659,6 +616,7 @@
             const cards = document.querySelectorAll('.card-3d');
             cards.forEach(card => {
                 card.addEventListener('mousemove', (e) => {
+                    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // Respect reduced motion
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left - rect.width / 2;
                     const y = e.clientY - rect.top - rect.height / 2;
@@ -666,6 +624,7 @@
                     const rotateY = (x / (rect.width / 2)) * 8;
                     card.style.setProperty('--rotateX', `${rotateX}deg`);
                     card.style.setProperty('--rotateY', `${rotateY}deg`);
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`; // Apply scale here too
                 });
                 card.addEventListener('mouseleave', () => {
                     card.style.setProperty('--rotateX', '0deg');
@@ -673,9 +632,18 @@
                     card.style.transform = 'perspective(1000px) rotateY(0) rotateX(0) scale3d(1, 1, 1)';
                 });
             });
+             console.log("3D Card listeners attached."); 
         }
 
         function attachFadeInObserver() {
+            // Check if IntersectionObserver is supported
+            if (!('IntersectionObserver' in window)) {
+                 console.warn("IntersectionObserver not supported, fade-in animations disabled.");
+                 // Optionally make elements visible directly
+                 document.querySelectorAll('.fade-in').forEach(el => el.style.opacity = 1);
+                 return;
+             }
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -683,94 +651,66 @@
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1 });
+            }, { threshold: 0.1 }); // Trigger earlier if needed
             
             const fadeElements = document.querySelectorAll('.fade-in');
-            fadeElements.forEach(el => observer.observe(el));
+             if (fadeElements.length > 0) {
+                fadeElements.forEach(el => observer.observe(el));
+                console.log("Fade-in observer attached."); 
+            } else {
+                 console.warn("No elements with class 'fade-in' found.");
+            }
         }
 
         function attachMagneticButtonListeners() {
             const magneticButtons = document.querySelectorAll('.btn-magnetic');
             magneticButtons.forEach(button => {
-                button.addEventListener('mousemove', (e) => {
-                    const rect = button.getBoundingClientRect();
-                    const x = e.clientX - (rect.left + rect.width / 2);
-                    const y = e.clientY - (rect.top + rect.height / 2);
-                    const moveX = x * 0.3;
-                    const moveY = y * 0.3;
-                    button.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
-                });
-                button.addEventListener('mouseleave', () => {
-                    button.style.transform = 'translate(0, 0) scale(1)';
-                });
+                 // Check for reduced motion preference
+                 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+                 
+                 function handleMouseMove(e) {
+                      if (motionQuery.matches) return; // Skip if reduced motion is enabled
+                      
+                      const rect = button.getBoundingClientRect();
+                      const x = e.clientX - (rect.left + rect.width / 2);
+                      const y = e.clientY - (rect.top + rect.height / 2);
+                      // Reduce the movement effect slightly
+                      const moveX = x * 0.2; 
+                      const moveY = y * 0.2;
+                      // Apply a subtle scale
+                      button.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`; 
+                 }
+                 
+                 function handleMouseLeave() {
+                      button.style.transform = 'translate(0, 0) scale(1)';
+                 }
+
+                 button.addEventListener('mousemove', handleMouseMove);
+                 button.addEventListener('mouseleave', handleMouseLeave);
             });
+            console.log("Magnetic button listeners attached."); 
         }
 
-        // NEW: Attach observer for background color
-        function attachScrollColorObserver() {
-            const colorObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const id = entry.target.id;
-                        if (sectionColors[id]) {
-                            targetColor = sectionColors[id];
-                        }
-                    }
-                });
-            }, { threshold: 0.5 }); // Trigger when 50% of the section is visible
+        // REMOVED attachScrollColorObserver()
 
-            const sections = document.querySelectorAll('section[id]');
-            sections.forEach(section => colorObserver.observe(section));
-        }
-
-        // --- Animation & Handler Functions (Called repeatedly) ---
-
-        // 1. Three.js Animation Loop (The "Heartbeat")
-        function animateThreeJS() {
-            if (!renderer || !globePoints || !stars) {
-                requestAnimationFrame(animateThreeJS); // Still request frame to not break loop
-                return; // Guard clause
-            }
-            
-            // Default autonomous rotation
-            globePoints.rotation.y += 0.0005;
-            stars.rotation.y += 0.0001;
-
-            // NEW: Smoothly transition color
-            globePoints.material.color.lerp(targetColor, 0.05); // 5% lerp speed
-            stars.material.color.lerp(targetColor, 0.02); // Stars change color slower
-
-            renderer.render(scene, camera);
-            requestAnimationFrame(animateThreeJS);
-        }
-
-        // 2. Three.js Scroll Handler
-        function handleThreeScroll() {
-            if (globePoints && camera) {
-                const scrollY = window.scrollY;
-                // Add scroll-based rotation
-                globePoints.rotation.y = (globePoints.rotation.y % (Math.PI * 2)) + scrollY * 0.00005; // Slower scroll rotation
-                globePoints.rotation.x = scrollY * 0.0002;
-                
-                // Move camera slightly
-                camera.position.z = 10 - scrollY * 0.002;
-                camera.position.y = scrollY * 0.001;
-            }
-        }
+        // --- Animation & Handler Functions ---
         
-        // 3. Three.js Resize Handler
-        function onWindowResize() {
-            if (camera && renderer) {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setPixelRatio(window.devicePixelRatio);
-            }
+        // Combined scroll handler
+        function handleScrollEvents() {
+            handleHeaderScroll();
+            handleScrollPlaneAnimation(); 
+            // REMOVED handleThreeScroll();
+            handleGradientScroll(); // Add gradient scroll handler
         }
+
+        // REMOVED animateThreeJS() 
+        // REMOVED handleThreeScroll()
+        // REMOVED onWindowResize() - Only needed for Three.js
 
         // 4. Header Scroll Effect
         function handleHeaderScroll() {
             const header = document.querySelector('header');
+             if (!header) return; 
             if (window.scrollY > 50) {
                 header.classList.add('header-scrolled');
             } else {
@@ -783,24 +723,68 @@
             const heroPlaneContainer = document.getElementById('hero-plane-container');
             const heroPlane = document.getElementById('hero-plane');
 
-            if (!heroPlane || !heroPlaneContainer) return; // Guard clause
+            if (!heroPlane || !heroPlaneContainer) return; 
 
             const scrollY = window.scrollY;
             const heroSectionHeight = window.innerHeight;
-            const animationScrollRange = heroSectionHeight * 0.8; 
-            let progress = Math.min(scrollY / animationScrollRange, 1);
+            const startScroll = 50; 
+            const animationScrollRange = (heroSectionHeight * 0.8) - startScroll; 
+            
+            let progress = 0;
+            if (scrollY > startScroll && animationScrollRange > 0) { // Avoid division by zero
+                progress = Math.min((scrollY - startScroll) / animationScrollRange, 1);
+            }
             
             const translateY = progress * (heroSectionHeight * 0.5);
             const rotateX = progress * 45;
             const rotateZ = progress * 30;
             const scale = 1 - (progress * 0.3);
 
-            heroPlane.style.transform = `translateY(${translateY}px) rotateX(${rotateX}deg) rotateZ(${rotateZ}deg) scale(${scale})`;
-            heroPlaneContainer.style.opacity = 1 - progress * 0.8;
+            // Apply transform using requestAnimationFrame for smoother updates
+            requestAnimationFrame(() => {
+                if(heroPlane) { // Check if element still exists
+                   heroPlane.style.transform = `translateY(${translateY}px) rotateX(${rotateX}deg) rotateZ(${rotateZ}deg) scale(${scale})`;
+                }
+                if(heroPlaneContainer) { // Check if element still exists
+                    heroPlaneContainer.style.opacity = 1 - progress * 0.8;
+                }
+            });
+        }
+        
+        // 6. Scroll-Driven CSS Gradient Angle Change
+        function handleGradientScroll() {
+            const scrollY = window.scrollY;
+            // Use document.body.offsetHeight for total scrollable height
+            const scrollMax = Math.max( document.body.scrollHeight, document.body.offsetHeight, 
+                                       document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight ) - window.innerHeight;
+            const scrollPercent = scrollMax > 0 ? (scrollY / scrollMax) : 0; // Avoid division by zero
+            
+            // Calculate angle based on scroll (e.g., 145deg to 325deg)
+            const angle = 145 + scrollPercent * 180; 
+            
+            // Update the CSS variable on the root element
+            document.documentElement.style.setProperty('--gradient-angle', `${angle}deg`);
+
+            // Apply the updated gradient to the container div as well for immediate effect
+            const gradientBgContainer = document.getElementById('gradient-bg-container');
+            if (gradientBgContainer) {
+                 gradientBgContainer.style.background = `linear-gradient(${angle}deg, #020617, #111827, #312e81, #064e3b)`;
+                 gradientBgContainer.style.backgroundSize = '300% 300%'; // Re-apply size
+            }
+        }
+
+        // --- Run Initialization on DOM Load ---
+        // Ensure the script runs after the DOM is fully parsed
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage(); // DOM is already ready
         }
 
     </script>
 
 </body>
 </html>
+
+
 
