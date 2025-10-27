@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ড্রিম টাচ ট্যুরস এন্ড ট্রাভেলস - বিশ্বস্ত ভ্রমণ সংস্থা</title>
+    
+    <!-- Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Font (Hind Siliguri) --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Typed.js for Typing Effect --><script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+
+    <style>
+        /* Base font setting */
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+        /* Glassmorphism class (Light glass for Dark Mode) */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.4s ease-out, border 0.4s ease-out;
+        }
+
+        /* Scrolled Header Style (Dark Mode) */
+        .header-scrolled {
+            background: rgba(10, 10, 10, 0.8); /* Near black, translucent */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 3D Tilt Effect on Hover (Unchanged, looks great on dark) */
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        .card-3d:hover {
+            transform: perspective(1000px) rotateY(var(--rotateY, 0)) rotateX(var(--rotateX, 0)) scale3d(1.05, 1.05, 1.05);
+        }
+
+        /* Scroll Animation Observer (Subtler 'premium' fade) */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Hero Text Animation (Unchanged) */
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-anim-1 { animation: slideInUp 0.8s ease-out 0.3s; animation-fill-mode: backwards; }
+        .hero-anim-2 { animation: slideInUp 0.8s ease-out 0.6s; animation-fill-mode: backwards; }
+        .hero-anim-3 { animation: slideInUp 0.8s ease-out 0.9s; animation-fill-mode: backwards; }
+
+        /* Typing Effect Cursor */
+        .typed-cursor {
+            color: #38bdf8; /* Cyan-400 */
+            animation: typed-blink 0.7s infinite;
+        }
+        @keyframes typed-blink {
+            50% { opacity: 0; }
+        }
+
+        /* Magnetic Button Transition */
+        .btn-magnetic {
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* New styles for scroll-driven 3D plane */
+        #hero-plane-container {
+            position: absolute;
+            top: 20%; /* Adjust initial position */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px; /* Base size of the plane */
+            height: 200px;
+            perspective: 1000px; /* For 3D effect */
+            z-index: 15;
+        }
+
+        #hero-plane {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: none; /* Controlled by JS, no CSS transition */
+            filter: drop-shadow(0 0 15px rgba(0, 180, 255, 0.6)); /* Subtle glow */
+        }
+        
+        #hero-plane img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+    </style>
+</head>
+<body class="bg-black text-gray-200">
+
+    <!-- ===== Header / Navigation Bar ===== --><header class="fixed top-0 left-0 right-0 z-50 glass-effect transition-all duration-300">
+        <nav class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo --><a href="#home" class="flex items-center space-x-3">
+                    <img src="https://i.ibb.co/C0mJkR7/Dream-Touch-Tours-logo.png" alt="ড্রিম টাচ ট্যুরস এন্ড ট্রাভেলস লোগো" class="h-12 w-auto object-contain">
+                    <span id="logo-text" class="hidden md:block text-xl lg:text-2xl font-bold text-white transition-all duration-300">
+                        ড্রিম টাচ ট্যুরস এন্ড ট্রাভেলস
+                    </span>
+                </a>
+                
+                <!-- Desktop Menu --><div class="hidden md:flex items-center md:space-x-4 lg:space-x-6" id="desktop-menu-links">
+                    <a href="#home" class="text-white hover:text-cyan-300 font-medium transition duration-300 md:text-sm lg:text-base">হোম</a>
+                    <a href="#about" class="text-white hover:text-cyan-300 font-medium transition duration-300 md:text-sm lg:text-base">আমাদের সম্পর্কে</a>
+                    <a href="#services" class="text-white hover:text-cyan-300 font-medium transition duration-300 md:text-sm lg:text-base">সেবা সমূহ</a>
+                    <a href="#packages" class="text-white hover:text-cyan-300 font-medium transition duration-300 md:text-sm lg:text-base">প্যাকেজ ট্যুর</a>
+                    <a href="#why-us" class="text-white hover:text-cyan-300 font-medium transition duration-300 md:text-sm lg:text-base">কেন আমরা?</a>
+                    <a href="#contact" class="text-white hover:text-cyan-300 font-medium transition duration-300 md:text-sm lg:text-base">যোগাযোগ</a>
+                    <a href="#contact" class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold rounded-full shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-cyan-400/40 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 md:text-sm lg:text-base">
+                        বুকিং করুন
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button --><div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-white focus:outline-none">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu (Hidden by default) --><div id="mobile-menu" class="md:hidden hidden pb-4 glass-effect md:glass-effect-none md:bg-transparent rounded-b-lg">
+                <a href="#home" class="block py-2 px-4 text-white hover:bg-white/10 rounded">হোম</a>
+                <a href="#about" class="block py-2 px-4 text-white hover:bg-white/10 rounded">আমাদের সম্পর্কে</a>
+                <a href="#services" class="block py-2 px-4 text-white hover:bg-white/10 rounded">সেবা সমূহ</a>
+                <a href="#packages" class="block py-2 px-4 text-white hover:bg-white/10 rounded">প্যাকেজ ট্যুর</a>
+                <a href="#why-us" class="block py-2 px-4 text-white hover:bg-white/10 rounded">কেন আমরা?</a>
+                <a href="#contact" class="block py-2 px-4 text-white hover:bg-white/10 rounded">যোগাযোগ</a>
+                <a href="#contact" class="block mt-2 text-center px-5 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold rounded-full shadow-lg">
+                    বুকিং করুন
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== Hero Section ===== --><section id="home" class="min-h-screen flex items-center justify-center bg-cover bg-center relative overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1542691238914-1e0e85ce70e8?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-attachment: fixed;">
+        <div class="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-10"></div>
+        
+        <!-- 3D Scroll-Controlled Plane Container --><div id="hero-plane-container">
+            <div id="hero-plane">
+                <img src="https://i.ibb.co/QnYg6t6/airplane-silhouette.png" alt="Flying Airplane 3D">
+            </div>
+        </div>
+
+        <div class="relative z-20 text-center text-white p-4 pt-28 sm:pt-24">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 hero-anim-1" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">
+                আপনার ভ্রমণ, আমাদের দায়িত্ব
+            </h1>
+            <!-- Typing Effect Container --><p class="text-2xl md:text-3xl mb-12 font-light hero-anim-2" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.7);">
+                আমরা আয়োজন করি: <span id="typed-text" class="font-semibold text-cyan-300"></span>
+            </p>
+            
+            <p class="text-lg md:text-xl max-w-3xl mx-auto mb-12 hero-anim-2">
+                গণপ্রজাতন্ত্রী বাংলাদেশ সরকার অনুমোদিত একটি নির্ভরযোগ্য ভ্রমণ সংস্থা। বিশ্বের যেকোনো প্রান্তে আপনার ভ্রমণকে সহজ ও আনন্দময় করতে আমরা অঙ্গীকারবদ্ধ।
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6 hero-anim-3">
+                <a href="#services" class="btn-magnetic px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-400 text-white text-lg font-semibold rounded-full shadow-lg shadow-blue-500/40 hover:shadow-2xl hover:shadow-cyan-400/50 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1">
+                    আমাদের সেবা দেখুন
+                </a>
+                <a href="#services" class="btn-magnetic px-8 py-4 bg-white text-blue-600 text-lg font-semibold rounded-full shadow-lg hover:shadow-2xl hover:shadow-white/30 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1">
+                    ভিসা প্রসেসিং
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== About Us Section ===== --><section id="about" class="py-24 bg-black">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <img src="https://i.ibb.co/C0mJkR7/Dream-Touch-Tours-logo.png" alt="ড্রিম টাচ ট্যুরস এন্ড ট্রাভেলস লোগো" class="mx-auto h-28 w-auto mb-6 object-contain filter drop-shadow-lg">
+                <h2 class="text-4xl font-bold text-white mb-4">আপনার বিশ্বস্ত ভ্রমণ সঙ্গী</h2>
+                <p class="text-xl text-gray-400 max-w-4xl mx-auto">
+                    "ড্রিম টাচ ট্যুরস এন্ড ট্রাভেলস" সুনামের সাথে ভ্রমণ সেবা প্রদান করে আসছে। আমরা শুধু একটি ট্রাভেল এজেন্সি নই, আমরা আপনার ভ্রমণ পরিকল্পনাকারী। আমাদের লক্ষ্য প্রতিটি ভ্রমণকে নিরাপদ, আরামদায়ক এবং স্মরণীয় করে তোলা।
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <!-- Trust Badge 1 --><div class="bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 100ms;">
+                    <div class="flex justify-center items-center mb-4">
+                        <svg class="w-16 h-16 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">সরকার অনুমোদিত</h3>
+                    <p class="text-gray-400">লাইসেন্স নং: ৪৯২৫</p>
+                </div>
+                <!-- Trust Badge 2 --><div class="bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 200ms;">
+                    <div class="flex justify-center items-center mb-4">
+                        <svg class="w-16 h-16 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.05c0 .621-.504 1.125-1.125 1.125H5.625A1.125 1.125 0 014.5 18.2V14.15M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">IATA সদস্য</h3>
+                    <p class="text-gray-400">কোড: ৪২৩৩৭৪৩৩</p>
+                </div>
+                <!-- Trust Badge 3 --><div class="bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-300 fade-in" style="transition-delay: 300ms;">
+                    <div class="flex justify-center items-center mb-4">
+                        <svg class="w-16 h-16 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">ATAB সদস্য</h3>
+                    <p class="text-gray-400">অ্যাসোসিয়েশন অফ ট্রাভেল এজেন্টস অফ বাংলাদেশ</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Services Section ===== --><section id="services" class="py-24 bg-gray-900">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold text-white mb-4">আমাদের প্রধান সেবাসমূহ</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">আপনার ভ্রমণের প্রতিটি প্রয়োজনে আমরা আছি আপনার সাথে। সুলভ মূল্যে সেরা মানের সেবা প্রদানই আমাদের লক্ষ্য।</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Service Card 1: Air Ticketing --><div class="card-3d glass-effect p-8 rounded-2xl shadow-xl shadow-blue-500/10 border-t-4 border-blue-400 fade-in" style="transition-delay: 100ms;">
+                    <div class="flex justify-center mb-6">
+                        <!-- Air Ticketing Icon --><svg class="w-20 h-20 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3.528 2.378a.75.75 0 01.442.842L2.73 13.5h.001l.718 2.155a11.972 11.972 0 007.412 4.192.75.75 0 01.396 0 11.972 11.972 0 007.412-4.192l.718-2.155h.001l-1.24-10.28a.75.75 0 01.442-.842 63.487 63.487 0 0113.682-.74a.75.75 0 01.674.524 63.818 63.818 0 00.354 7.641.75.75 0 01-.118.529l-3.385 3.384A.75.75 0 0015 16.5h-1.636a.75.75 0 00-.594.246l-1.296 1.344a.75.75 0 01-1.152 0l-1.296-1.344a.75.75 0 00-.594-.246H9a.75.75 0 00-.53.22L7.04 15.54a.75.75 0 01-.06-1.06L4.568 11.025a.75.75 0 01.597-.932 6.64 6.64 0 003.551-.62.75.75 0 01.815.176l2.36 2.36a.75.75 0 001.06-1.06l-2.36-2.36a.75.75 0 01-.176-.815 6.64 6.64 0 00-.62-3.551.75.75 0 01.932-.597l2.455 2.455a.75.75 0 001.06-1.06l-2.455-2.455a.75.75 0 01-.815-.176 6.64 6.64 0 00-3.551.62.75.75 0 01-.932.597L3.528 2.378z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-center text-white mb-4">বিমান টিকেট সংক্রান্ত সেবা</h3>
+                    <p class="text-gray-400 text-center">
+                        বিশ্বের সকল দেশের এবং সকল এয়ারলাইন্সের বিমানের টিকেট অত্যন্ত সুলভ মূল্যে সরবরাহ করে থাকি। আমাদের সেবার মধ্যে রয়েছে: যেকোনো দেশের বিমানের টিকেট, টিকেটের তারিখ পরিবর্তন, টিকেট রি-কনফার্ম করা এবং গ্রুপ বুকিং।
+                    </p>
+                </div>
+                
+                <!-- Service Card 2: Visa Processing --><div class="card-3d glass-effect p-8 rounded-2xl shadow-xl shadow-blue-500/10 border-t-4 border-blue-400 fade-in" style="transition-delay: 200ms;">
+                    <div class="flex justify-center mb-6">
+                        <!-- Visa Processing Icon (Passport and stamp) --><svg class="w-20 h-20 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.5 6a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 6zM7.5 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM4.755 2.126A2.25 2.25 0 002.504 4.375v15.25c0 1.171.954 2.125 2.125 2.125h14.5a2.25 2.25 0 002.25-2.25V4.375a2.25 2.25 0 00-2.25-2.25H4.755zM19.875 3.75h-15a.75.75 0 00-.75.75v14.5c0 .414.336.75.75.75h15a.75.75 0 00.75-.75V4.5a.75.75 0 00-.75-.75zM12 7.5a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75V8.5a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75V7.5zM12 12a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v1a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75v-1zM12 16.5a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v1a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75v-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-center text-white mb-4">ভিসা প্রসেসিং</h3>
+                    <p class="text-gray-400 text-center">
+                        যেকোনো দেশের ভিসা প্রসেসিং এখন আরও সহজ। বিশেষ সেবা: সৌদি ভিজিট ভিসা, কুয়েত ভিসা, নেপাল, থাইল্যান্ড, মালয়েশিয়া, সিঙ্গাপুর, ফিলিপাইন, চীনের ট্যুরিস্ট ভিসা এবং ভারতীয় মেডিকেল ভিসা প্রসেসিং।
+                    </p>
+                </div>
+                
+                <!-- Service Card 3: Other Services --><div class="card-3d glass-effect p-8 rounded-2xl shadow-xl shadow-blue-500/10 border-t-4 border-blue-400 fade-in" style="transition-delay: 300ms;">
+                    <div class="flex justify-center mb-6">
+                        <!-- Other Services Icon (Travel Bag / Suitcase) --><svg class="w-20 h-20 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18.75 2.25H5.25A2.25 2.25 0 003 4.5v15c0 1.243 1.007 2.25 2.25 2.25h13.5c1.243 0 2.25-1.007 2.25-2.25v-15a2.25 2.25 0 00-2.25-2.25zM15 6a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75V6.75a.75.75 0 01.75-.75h.008zm-4.5 0a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75V6.75a.75.75 0 01.75-.75h.008zm-4.5 0a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V6.75a.75.75 0 01.75-.75h.008zM4.5 9.75a.75.75 0 01.75-.75h13.5a.75.75 0 01.75.75v9.75c0 .414-.336.75-.75.75H5.25a.75.75 0 01-.75-.75V9.75z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-center text-white mb-4">অন্যান্য গুরুত্বপূর্ণ সেবা</h3>
+                    <p class="text-gray-400 text-center">
+                        ভ্রমণের আনুষঙ্গিক সকল সেবা এক ছাদের নিচে। আমরা অফার করছি: আকর্ষণীয় প্যাকেজ ট্যুর, ফিঙ্গার প্রিন্ট সার্ভিস, ম্যান পাওয়ার সার্ভিস এবং মেডিকেল চেক-আপ সুবিধা।
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Package Tours Section ===== --><section id="packages" class="py-24 bg-black">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold text-white mb-4">আকর্ষণীয় প্যাকেজ ট্যুর</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">দেশ ও বিদেশের দর্শনীয় স্থানগুলোতে ঘুরে আসুন আমাদের আকর্ষণীয় ট্যুর প্যাকেজে। কাস্টমাইজড এবং গ্রুপ ট্যুরের সুবিধা।</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Package Card 1: Nepal --><div class="bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 100ms;">
+                    <img src="https://images.unsplash.com/photo-1626217429188-34857b686cf2?auto=format&fit=crop&w=600&h=400&q=80" alt="নেপাল ট্যুর" class="w-full h-56 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-white mb-2">নেপাল ট্যুর - কাঠমান্ডু ও পোখরা</h3>
+                        <p class="text-gray-400 mb-4">৪ রাত / ৫ দিন</p>
+                        <a href="#contact" class="inline-block px-6 py-2 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300">
+                            বিস্তারিত জানুন
+                        </a>
+                    </div>
+                </div>
+                <!-- Package Card 2: Thailand --><div class="bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 200ms;">
+                    <img src="https://images.unsplash.com/photo-1549419137-d0d52b12a527?auto=format&fit=crop&w=600&h=400&q=80" alt="থাইল্যান্ড ট্যুর" class="w-full h-56 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-white mb-2">থাইল্যান্ড স্পেশাল - ব্যাংকক ও পাতায়া</h3>
+                        <p class="text-gray-400 mb-4">৩ রাত / ৪ দিন</p>
+                        <a href="#contact" class="inline-block px-6 py-2 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300">
+                            বিস্তারিত জানুন
+                        </a>
+                    </div>
+                </div>
+                <!-- Package Card 3: Singapore-Malaysia --><div class="bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/30 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/20 fade-in" style="transition-delay: 300ms;">
+                    <img src="https://images.unsplash.com/photo-1582234057997-873b88b022b7?auto=format&fit=crop&w=600&h=400&q=80" alt="সিঙ্গাপুর-মালয়েশিয়া ট্যুর" class="w-full h-56 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-white mb-2">সিঙ্গাপুর-মালয়েশিয়া কম্বো</h3>
+                        <p class="text-gray-400 mb-4">৫ রাত / ৬ দিন</p>
+                        <a href="#contact" class="inline-block px-6 py-2 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300">
+                            বিস্তারিত জানুন
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Why Choose Us Section ===== --><section id="why-us" class="py-24 bg-gray-900">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold text-white mb-4">কেন হাজারো যাত্রী আমাদের উপর আস্থা রাখেন?</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature 1 --><div class="text-center p-6 fade-in" style="transition-delay: 100ms;">
+                    <div class="flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-white mx-auto mb-6 shadow-lg shadow-blue-500/30">
+                        <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">সরকারি অনুমোদন</h3>
+                    <p class="text-gray-400">আমরা লাইসেন্সপ্রাপ্ত ও নির্ভরযোগ্য একটি প্রতিষ্ঠান।</p>
+                </div>
+                <!-- Feature 2 --><div class="text-center p-6 fade-in" style="transition-delay: 200ms;">
+                    <div class="flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-white mx-auto mb-6 shadow-lg shadow-blue-500/30">
+                        <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0l.879-.659M7.5 14.25v-2.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v2.5m3.75 0v-2.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v2.5m-9 3.75h9A.75.75 0 0121 18v-2.5a.75.75 0 01-.75-.75v-2.5a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v2.5a.75.75 0 01-.75.75h-3a.75.75 0 01-.75-.75v-2.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v2.5A.75.75 0 0118 18v-2.5a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v2.5a.75.75 0 01-.75.75h-3a.75.75 0 01-.75-.75V15m-3 3H3A.75.75 0 012.25 18v-2.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V15m-3 3h3a.75.75 0 01.75-.75v-2.5a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v2.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V15m0 3H3.75A.75.75 0 013 17.25V15a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v2.25c0 .414-.336.75-.75.75z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">সুলভ মূল্য</h3>
+                    <p class="text-gray-400">আমরা প্রতিযোগিতামূলক দামে সেরা সেবা নিশ্চিত করি।</p>
+                </div>
+                <!-- Feature 3 --><div class="text-center p-6 fade-in" style="transition-delay: 300ms;">
+                    <div class="flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-white mx-auto mb-6 shadow-lg shadow-blue-500/30">
+                        <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">ওয়ান-স্টপ সল্যুশন</h3>
+                    <p class="text-gray-400">টিকেট, ভিসা, প্যাকেজ ট্যুর - সব সেবা এক ছাদের নিচে।</p>
+                </div>
+                <!-- Feature 4 --><div class="text-center p-6 fade-in" style="transition-delay: 400ms;">
+                    <div class="flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-white mx-auto mb-6 shadow-lg shadow-blue-500/30">
+                        <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.892-.66-5.29-3.058-5.952-5.952l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-2">২৪/৭ সাপোর্ট</h3>
+                    <p class="text-gray-400">আপনার যেকোনো প্রয়োজনে আমরা সর্বদা পাশে আছি।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Contact & Location Section ===== --><section id="contact" class="py-24 bg-black">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <!-- Contact Form --><div class="bg-gray-900 p-8 md:p-12 rounded-2xl shadow-xl border border-gray-800 fade-in">
+                    <h2 class="text-3xl font-bold text-white mb-6">দ্রুত সেবার জন্য যোগাযোগ করুন</h2>
+                    <form action="#" method="POST">
+                        <div class="mb-5">
+                            <label for="name" class="block mb-2 text-sm font-medium text-gray-400">আপনার নাম</label>
+                            <input type="text" id="name" name="name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div class="mb-5">
+                            <label for="phone" class="block mb-2 text-sm font-medium text-gray-400">ফোন নম্বর</label>
+                            <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div class="mb-5">
+                            <label for="service" class="block mb-2 text-sm font-medium text-gray-400">প্রয়োজনীয় সেবা</label>
+                            <select id="service" name="service" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>বিমান টিকেট</option>
+                                <option>ভিসা প্রসেসিং</option>
+                                <option>প্যাকেজ ট্যুর</option>
+                                <option>অন্যান্য</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label for="message" class="block mb-2 text-sm font-medium text-gray-400">আপনার বার্তা</label>
+                            <textarea id="message" name="message" rows="4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white text-lg font-semibold rounded-full shadow-lg shadow-blue-500/40 hover:shadow-xl hover:shadow-cyan-400/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+                                বার্তা পাঠান
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Contact Info & Map --><div class="fade-in" style="transition-delay: 200ms;">
+                    <h2 class="text-3xl font-bold text-white mb-6">আমাদের ঠিকানা</h2>
+                    <div class="space-y-6 text-lg">
+                        <div class="flex items-start gap-4">
+                            <svg class="w-7 h-7 text-blue-400 mt-1 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                            </svg>
+                            <span class="text-gray-300"><strong>অফিস:</strong> রহমান শপিং মল, ২৪ এফ (২য় তলা), পশ্চিম পাশে, চান্দনা চৌরাস্তা, গাজীপুর সদর, গাজীপুর।</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <svg class="w-6 h-6 text-blue-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.892-.66-5.29-3.058-5.952-5.952l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                            </svg>
+                            <span class="text-gray-300"><strong>ফোন:</strong> <a href="tel:01715158615" class="hover:text-blue-400">০১৭১৫-১৫৮৬১৫</a></span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <svg class="w-6 h-6 text-green-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 12C2.13 17.55 6.58 22 12.04 22C13.81 22 15.5 21.54 17 20.76L17.3 20.6L19.46 22.5C19.85 22.82 20.44 22.76 20.76 22.37C20.9 22.18 21 21.94 21 21.7V19.42L20.82 19.14C21.6 17.71 22.04 16.05 22.04 14.28C22.04 8.73 17.5 4.28 12.04 4.28L12.04 2M12.04 3.67C16.63 3.67 20.37 7.41 20.37 12C20.37 13.68 19.92 15.25 19.15 16.6C19 16.85 18.79 17.03 18.53 17.1L18.3 17.25H16.5C16.06 17.25 15.63 17.42 15.3 17.75L14.25 18.81L14.88 18.17C15.11 17.94 15.12 17.58 14.9 17.34C14.7 17.13 14.41 17.03 14.12 17.05C13.43 17.11 12.73 17.16 12.04 17.16C7.45 17.16 3.8 13.5 3.8 8.84C3.8 6.99 4.46 5.3 5.58 4.18C6.7 3.06 8.3 2.4 10.15 2.4C10.76 2.4 11.37 2.46 11.97 2.58C12.21 2.62 12.46 2.77 12.61 2.97C12.76 3.17 12.8 3.42 12.74 3.67C12.62 4.18 12.44 4.67 12.2 5.14C12.07 5.41 11.8 5.61 11.5 5.69C11.4 5.71 11.3 5.72 11.2 5.72C10.96 5.72 10.72 5.62 10.53 5.44C9.8 4.75 8.91 4.3 7.93 4.3C6.39 4.3 5.13 5.56 5.13 7.1C5.13 8.64 6.39 9.9 7.93 9.9H8.5C8.94 9.9 9.3 10.26 9.3 10.7V11.2C9.3 11.64 8.94 12 8.5 12H7.93C5.5 12 3.53 10.03 3.53 7.6C3.53 5.17 5.5 3.2 7.93 3.2C9.21 3.2 10.36 3.72 11.21 4.58C11.36 4.73 11.58 4.81 11.8 4.78C12.07 4.74 12.3 4.57 12.43 4.31C12.7 3.78 12.89 3.27 13.02 2.76C13.08 2.52 13.02 2.26 12.85 2.08C12.69 1.89 12.45 1.78 12.21 1.74C11.58 1.63 10.95 1.57 10.3 1.57C8.2 1.57 6.31 2.3 4.9 3.63C3.5 4.97 2.67 6.7 2.67 8.84C2.67 14.39 7.12 18.84 12.67 18.84C13.43 18.84 14.18 18.78 14.91 18.66C15.17 18.62 15.42 18.71 15.6 18.9C15.79 19.09 15.86 19.35 15.8 19.6L15.08 20.32L17.4 17.99C17.6 17.79 17.88 17.68 18.17 17.68H20.06C20.3 17.68 20.53 17.78 20.71 17.96C21.49 16.71 22.04 15.3 22.04 13.77C22.04 8.22 17.59 3.67 12.04 3.67Z" />
+                            </svg>
+                            <span class="text-gray-300"><strong>WhatsApp:</strong> <a href="https://wa.me/8801715158615" target="_blank" rel="noopener noreferrer" class="hover:text-green-500">wa.me/8801715158615</a></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Google Map Embed --><div class="mt-8 rounded-xl overflow-hidden shadow-xl border border-gray-800">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3647.288224538165!2d90.39564617593259!3d23.91494638064372!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c42171120287%3A0x6a6c42962e73719!2sRahman%20Shopping%20Mall!5e0!3m2!1sen!2sbd!4v1722861614050!5m2!1sen!2sbd" 
+                            width="100%" 
+                            height="400" 
+                            style="border:0; filter: invert(100%) hue-rotate(180deg);" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Footer ===== --><footer class="bg-black text-gray-400 py-12 border-t border-gray-800">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                <!-- Copyright --><div>
+                    <div class="flex items-center justify-center md:justify-start mb-2 md:mb-0">
+                        <img src="https://i.ibb.co/C0mJkR7/Dream-Touch-Tours-logo.png" alt="ড্রিম টাচ ট্যুরস এন্ড ট্রাভেলস লোগো" class="h-10 w-auto mr-3 object-contain filter drop-shadow">
+                        <p class="text-xl font-semibold text-white">ড্রিম টাচ ট্যুরস এন্ড ট্রাভেলস</p>
+                    </div>
+                    <p class="mt-2 text-gray-500">© ২০২৫ সর্বস্বত্ব সংরক্ষিত।</p>
+                </div>
+                
+                <!-- Footer Links --><div class="flex space-x-6 mt-6 md:mt-0">
+                    <a href="#about" class="hover:text-white transition duration-300">আমাদের সম্পর্কে</a>
+                    <a href="#services" class="hover:text-white transition duration-300">সেবা সমূহ</a>
+                    <a href="#contact" class="hover:text-white transition duration-300">যোগাযোগ</a>
+                </div>
+
+                <!-- Social Icons --><div class="flex space-x-4 mt-6 md:mt-0">
+                    <a href="https://wa.me/8801715158615" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition duration-300">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 12C2.13 17.55 6.58 22 12.04 22C13.81 22 15.5 21.54 17 20.76L17.3 20.6L19.46 22.5C19.85 22.82 20.44 22.76 20.76 22.37C20.9 22.18 21 21.94 21 21.7V19.42L20.82 19.14C21.6 17.71 22.04 16.05 22.04 14.28C22.04 8.73 17.5 4.28 12.04 4.28L12.04 2M12.04 3.67C16.63 3.67 20.37 7.41 20.37 12C20.37 13.68 19.92 15.25 19.15 16.6C19 16.85 18.79 17.03 18.53 17.1L18.3 17.25H16.5C16.06 17.25 15.63 17.42 15.3 17.75L14.25 18.81L14.88 18.17C15.11 17.94 15.12 17.58 14.9 17.34C14.7 17.13 14.41 17.03 14.12 17.05C13.43 17.11 12.73 17.16 12.04 17.16C7.45 17.16 3.8 13.5 3.8 8.84C3.8 6.99 4.46 5.3 5.58 4.18C6.7 3.06 8.3 2.4 10.15 2.4C10.76 2.4 11.37 2.46 11.97 2.58C12.21 2.62 12.46 2.77 12.61 2.97C12.76 3.17 12.8 3.42 12.74 3.67C12.62 4.18 12.44 4.67 12.2 5.14C12.07 5.41 11.8 5.61 11.5 5.69C11.4 5.71 11.3 5.72 11.2 5.72C10.96 5.72 10.72 5.62 10.53 5.44C9.8 4.75 8.91 4.3 7.93 4.3C6.39 4.3 5.13 5.56 5.13 7.1C5.13 8.64 6.39 9.9 7.93 9.9H8.5C8.94 9.9 9.3 10.26 9.3 10.7V11.2C9.3 11.64 8.94 12 8.5 12H7.93C5.5 12 3.53 10.03 3.53 7.6C3.53 5.17 5.5 3.2 7.93 3.2C9.21 3.2 10.36 3.72 11.21 4.58C11.36 4.73 11.58 4.81 11.8 4.78C12.07 4.74 12.3 4.57 12.43 4.31C12.7 3.78 12.89 3.27 13.02 2.76C13.08 2.52 13.02 2.26 12.85 2.08C12.69 1.89 12.45 1.78 12.21 1.74C11.58 1.63 10.95 1.57 10.3 1.57C8.2 1.57 6.31 2.3 4.9 3.63C3.5 4.97 2.67 6.7 2.67 8.84C2.67 14.39 7.12 18.84 12.67 18.84C13.43 18.84 14.18 18.78 14.91 18.66C15.17 18.62 15.42 18.71 15.6 18.9C15.79 19.09 15.86 19.35 15.8 19.6L15.08 20.32L17.4 17.99C17.6 17.79 17.88 17.68 18.17 17.68H20.06C20.3 17.68 20.53 17.78 20.71 17.96C21.49 16.71 22.04 15.3 22.04 13.77C22.04 8.22 17.59 3.67 12.04 3.67Z" />
+                        </svg>
+                    </a>
+                    <!-- Add Facebook Icon/Link here if available --></div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript for Mobile Menu
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        const mobileLinks = mobileMenu.getElementsByTagName('a');
+        for (let link of mobileLinks) {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        }
+
+        // JavaScript for Header Scroll Effect (Simplified for Dark Mode)
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
+        });
+
+        // JavaScript for 3D Card Tilt Effect
+        const cards = document.querySelectorAll('.card-3d');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const rotateX = (y / (rect.height / 2)) * -8; // Reduced tilt for premium feel
+                const rotateY = (x / (rect.width / 2)) * 8;
+                card.style.setProperty('--rotateX', `${rotateX}deg`);
+                card.style.setProperty('--rotateY', `${rotateY}deg`);
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.setProperty('--rotateX', '0deg');
+                card.style.setProperty('--rotateY', '0deg');
+                card.style.transform = 'perspective(1000px) rotateY(0) rotateX(0) scale3d(1, 1, 1)';
+            });
+        });
+
+        // JavaScript for Scroll Animations (Intersection Observer)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        const fadeElements = document.querySelectorAll('.fade-in');
+        fadeElements.forEach(el => observer.observe(el));
+
+        // JavaScript for Typing Effect
+        document.addEventListener('DOMContentLoaded', () => {
+            new Typed('#typed-text', {
+                strings: ['বিমান টিকেট', 'ভিসা প্রসেসিং', 'আকর্ষণীয় প্যাকেজ ট্যুর', 'গ্রুপ বুকিং', 'নিরাপদ ভ্রমণ'],
+                typeSpeed: 70,
+                backSpeed: 40,
+                backDelay: 1500,
+                loop: true,
+                smartBackspace: true
+            });
+        });
+
+        // JavaScript for Magnetic Buttons
+        const magneticButtons = document.querySelectorAll('.btn-magnetic');
+        magneticButtons.forEach(button => {
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = e.clientX - (rect.left + rect.width / 2);
+                const y = e.clientY - (rect.top + rect.height / 2);
+
+                // Move button towards cursor (e.g., 30% of the distance)
+                const moveX = x * 0.3;
+                const moveY = y * 0.3;
+                
+                button.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
+            });
+
+            button.addEventListener('mouseleave', () => {
+                // Reset button to original position smoothly
+                button.style.transform = 'translate(0, 0) scale(1)';
+            });
+        });
+
+        // JavaScript for Scroll-Driven 3D Plane Animation
+        const heroPlaneContainer = document.getElementById('hero-plane-container');
+        const heroPlane = document.getElementById('hero-plane');
+
+        function handleScrollPlaneAnimation() {
+            const scrollY = window.scrollY;
+            const heroSectionHeight = window.innerHeight; // Height of the hero section
+
+            // Define the scroll range over which the animation occurs
+            // Let's say the animation runs for the first 80% of the hero section scroll
+            const animationScrollRange = heroSectionHeight * 0.8; 
+            
+            // Calculate progress (0 to 1)
+            let progress = Math.min(scrollY / animationScrollRange, 1);
+
+            // Calculate translateY (moves downwards as you scroll)
+            const translateY = progress * (heroSectionHeight * 0.5); // Moves down by 50% of screen height
+
+            // Calculate rotation (rotates as it moves down)
+            const rotateX = progress * 45; // Tilts forward by up to 45 degrees
+            const rotateZ = progress * 30; // Tilts to the side by up to 30 degrees (e.g., banking)
+
+            // Calculate scale (gets slightly smaller as it "flies away" or closer if negative)
+            const scale = 1 - (progress * 0.3); // Gets 30% smaller
+
+            heroPlane.style.transform = `translateY(${translateY}px) rotateX(${rotateX}deg) rotateZ(${rotateZ}deg) scale(${scale})`;
+            heroPlaneContainer.style.opacity = 1 - progress * 0.8; // Fades out as it descends
+        }
+
+        // Attach the scroll event listener
+        window.addEventListener('scroll', handleScrollPlaneAnimation);
+
+        // Initial call to set the plane's position if not at the top
+        handleScrollPlaneAnimation();
+
+    </script>
+
+</body>
+</html>
+
